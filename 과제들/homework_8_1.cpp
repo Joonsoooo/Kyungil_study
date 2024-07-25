@@ -1,63 +1,152 @@
 #include <iostream>
+#include <time.h>
 using namespace std;
 
-void kick(int one);
-void kick(int one, int two);
-void kick(int one, int two, int three);
+int Bet(int Betting);
 
-void main()
+enum Shape
 {
-	string inputSkill;
-	int Damage;
-	int one, two, three;
+    clover, spade, heart, diamond
+};
 
-	cout << "½ºÅ³ ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä." << endl;
-	cin >> inputSkill;
+struct Trump
+{
+    Shape shape;
+    int num;
+};
 
-	cout << "µ¥¹ÌÁö¸¦ ÀÔ·ÂÇÏ¼¼¿ä (3¹ø±îÁö °¡´É)" << endl;
-	cin >> one;
+void SelectCard(Trump trump);
 
-	if (inputSkill == "kick")
-	{
-		if (one != 0)
-		{
-			cin >> two;
-			if (two != 0)
-			{
-				cin >> three;
-				if (three != 0)
-				{
-					kick(one, two, three);
-				}
-				else
-				{
-					kick(one, two);
-				}
-			}
-			else {
-				kick(one);
-			}
-		}
-	}
+int main()
+{
+    int Money = 10000;
+
+    Trump trump[52];
+    int count = 0;
+
+    for (int shape = clover; shape <= diamond; shape++) {
+        for (int num = 1; num <= 13; num++) {
+            trump[count].shape = static_cast<Shape>(shape);
+            trump[count].num = num;
+            count++;
+        }
+    }
+
+    srand(time(NULL));
+
+    for (int i = 0; i < 100; ++i) {
+        int r1 = rand() % 52;
+        int r2 = rand() % 52;
+        Trump temp = trump[r1];
+        trump[r1] = trump[r2];
+        trump[r2] = temp;
+    }
+
+    int cnt = 0;
+
+    for (int i = 1; i <= 17; i++)
+    {
+        int Betting = 1000;
+
+        if (Money < Betting)
+        {
+            cout << "ì†Œì§€ê¸ˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤." << endl;
+            return 0;
+        }
+
+        Betting = Bet(Betting);
+        Money -= 1000;
+
+        SelectCard(trump[cnt]);
+        cout << "\t";
+        SelectCard(trump[cnt+1]);
+        cout << "\t";
+        SelectCard(trump[cnt+2]);
+        cout << endl;
+
+        if ((trump[cnt + 1].num > trump[cnt].num && trump[cnt + 1].num < trump[cnt + 2].num) ||
+            (trump[cnt + 1].num < trump[cnt].num && trump[cnt + 1].num > trump[cnt + 2].num)) {
+            Money += Betting * 7;
+            Betting = Betting * 7;
+            cout << "ìŠ¹ë¦¬!! " << "ë”´ ê¸ˆì•¡ : " << Betting << " " << "í˜„ìž¬ ê¸ˆì•¡: " << Money << endl;
+        }
+        else {
+            Money -= Betting * 3;
+            Betting = Betting * 3;
+            cout << "íŒ¨ë°°.. " << "ìžƒì€ ê¸ˆì•¡ : " << Betting << " " << "í˜„ìž¬ ê¸ˆì•¡: " << Money << endl;
+        }
+        cout << "========" << i << "ë²ˆì§¸ ê²Œìž„ ì¢…ë£Œ" << "==========" << endl << endl;
+
+        cnt += 3;
+    }
+
 }
 
-void kick(int one)
+int Bet(int Betting)
 {
-	cout << "½ºÅ³ ÀÌ¸§ : " << "kick" << endl;
-	cout << "µ¥¹ÌÁö : " << one << endl;
-	cout << "Å©¸®Æ¼ÄÃ È®·ü : " << "10% " << "ÇÇ°Ý°Å¸® :" << "100cm" << endl;
+    int DoOrNot;
+    int Bet;
+
+    cout << "ë°°íŒ…í•˜ê² ìŠµë‹ˆê¹Œ? (1: í•œë‹¤, 2: ì•ˆí•œë‹¤)" << endl;
+    cin >> DoOrNot;
+
+    if (DoOrNot == 1)
+    {
+        cout << "ì–¼ë§ˆë‚˜ ì˜¬ë¦¬ê² ìŠµë‹ˆê¹Œ?(1: 2ë°°, 2: 1.5ë°°)" << endl;
+        cin >> Bet;
+        if (Bet == 1)
+        {
+            cout << "í˜„ìž¬ íŒëˆì— 2ë°° ì˜¬ë ¸ìŠµë‹ˆë‹¤. (í˜„ìž¬ íŒëˆ: " << Betting * 2 << ")" << endl;
+            cout << "=======================" << endl;
+            return Betting * 2;
+        }
+        else if (Bet == 2)
+        {
+            cout << "í˜„ìž¬ íŒëˆì— 1.5ë°° ì˜¬ë ¸ìŠµë‹ˆë‹¤. (í˜„ìž¬ íŒëˆ: " << Betting * 1.5 << ")" << endl;
+            cout << "=======================" << endl;
+            return Betting * 1.5;
+        }
+    }
+    else if (DoOrNot == 2)
+    {
+        cout << "í˜„ìž¬ íŒëˆìœ¼ë¡œ ê°€ê² ìŠµë‹ˆë‹¤ (í˜„ìž¬ íŒëˆ: " << Betting << ")" << endl;
+        cout << "=======================" << endl;
+        return Betting;
+    }
+
 }
 
-void kick(int one, int two)
+void SelectCard(Trump trump)
 {
-	cout << "½ºÅ³ ÀÌ¸§ : " << "Double kick" << endl;
-	cout << "µ¥¹ÌÁö : " << one << " " << two << endl;
-	cout << "Å©¸®Æ¼ÄÃ È®·ü : " << "10% 20% " << "ÇÇ°Ý°Å¸® :" << "100cm" << endl;
-}
-
-void kick(int one, int two, int three)
-{
-	cout << "½ºÅ³ ÀÌ¸§ : " << "Triple kick" << endl;
-	cout << "µ¥¹ÌÁö : " << one << " " << two << " " << three << endl;
-	cout << "Å©¸®Æ¼ÄÃ È®·ü : " << "10% 20% 30% " << "ÇÇ°Ý°Å¸® :" << "100cm" << endl;
+    switch (trump.shape) {
+    case clover:
+        cout << "â™£ ";
+        break;
+    case spade:
+        cout << "â™  ";
+        break;
+    case heart:
+        cout << "â™¥ ";
+        break;
+    case diamond:
+        cout << "â™¦ ";
+        break;
+    }
+    switch (trump.num)
+    {
+    case 1:
+        cout << "A ";
+        break;
+    case 11:
+        cout << "J ";
+        break;
+    case 12:
+        cout << "Q ";
+        break;
+    case 13:
+        cout << "K ";
+        break;
+    default:
+        cout << trump.num << " ";
+    }
 }
